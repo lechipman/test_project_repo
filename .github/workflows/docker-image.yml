@@ -1,7 +1,6 @@
 name: Update Environment
 
-on: workflow_dispatch
-#  push:
+on: push:
  #   branches: [ "main" ]
   #  paths:
    #   - 'environment.yml'
@@ -16,6 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3.5.2
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME}}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN}}
+          
     - name: Build the Docker image
+    - uses: actions/build_push_action@v2
       run: docker build . --file DockerFile --tag exampleenv:$(date +%s)
